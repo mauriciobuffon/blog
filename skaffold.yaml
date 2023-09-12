@@ -1,0 +1,64 @@
+apiVersion: skaffold/v2aplha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/event-bus-depl.yaml
+      - ./infra/k8s/posts-depl.yaml
+      - ./infra/k8s/comments-depl.yaml
+      - ./infra/k8s/query-depl.yaml
+      - ./infra/k8s/moderation-depl.yaml
+      - ./infra/k8s/client-depl.yaml
+      - ./infra/k8s/ingress-svc.yaml
+build:
+  local:
+    push: false
+  artifacts:
+    - image: mauriciobuffon/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.js"
+            dest: .
+    - image: mauriciobuffon/event-bus
+      context: event-bus
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "*.js"
+            dest: .
+    - image: mauriciobuffon/posts
+      context: posts
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "*.js"
+            dest: .
+    - image: mauriciobuffon/comments
+      context: comments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "*.js"
+            dest: .
+    - image: mauriciobuffon/query
+      context: query
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "*.js"
+            dest: .
+    - image: mauriciobuffon/moderation
+      context: moderation
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "*.js"
+            dest: .
